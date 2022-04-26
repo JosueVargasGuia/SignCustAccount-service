@@ -13,6 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.netflix.discovery.converters.Auto;
+import com.nttdata.SignCustAccountservice.FeignClient.AccountFeignClient;
+import com.nttdata.SignCustAccountservice.FeignClient.CustomerFeignClient;
+import com.nttdata.SignCustAccountservice.FeignClient.ProductFeignClient;
+import com.nttdata.SignCustAccountservice.FeignClient.TableIdFeignClient;
 import com.nttdata.SignCustAccountservice.entity.SignatoriesCustomerAccounts;
 import com.nttdata.SignCustAccountservice.model.Account;
 
@@ -31,17 +36,27 @@ import reactor.core.publisher.Mono;
 @Service
 public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustomerAccountsService {
 
-	@Value("${api.account-service.uri}")
-	private String accountService;
+	@Autowired
+	AccountFeignClient accountFeignClient;
 
-	@Value("${api.product-service.uri}")
-	private String productService;
+	@Autowired
+	ProductFeignClient productFeignClient;
 
-	@Value("${api.customer-service.uri}")
-	private String customerService;
-	
-	@Value("${api.tableId-service.uri}")
-	String tableIdService;
+	@Autowired
+	CustomerFeignClient customerFeignClient;
+
+	@Autowired
+	TableIdFeignClient tableIdFeignClient;
+
+	/*
+	 * @Value("${api.account-service.uri}") private String accountService;
+	 * 
+	 * @Value("${api.product-service.uri}") private String productService;
+	 * 
+	 * @Value("${api.customer-service.uri}") private String customerService;
+	 * 
+	 * @Value("${api.tableId-service.uri}") String tableIdService;
+	 */
 
 	@Autowired
 	SignatoriesCustomerAccountsRepository accountsRepository;
@@ -64,14 +79,16 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 
 	@Override
 	public Mono<SignatoriesCustomerAccounts> save(SignatoriesCustomerAccounts signatoriesCustomerAccounts) {
-		// TODO Auto-generated method stub
-		
-		Long key=generateKey(SignatoriesCustomerAccounts.class.getSimpleName());
-				if(key>=1) {
-					signatoriesCustomerAccounts.setIdSignCustAccount(key);
-					log.info("SAVE[product]:"+signatoriesCustomerAccounts.toString());
-				}
-		
+
+		Long key = generateKey(SignatoriesCustomerAccounts.class.getSimpleName());
+		if (key >= 1) {
+			signatoriesCustomerAccounts.setIdSignCustAccount(key);
+			log.info("SAVE [SignatoriesCustomerAccounts]: " + signatoriesCustomerAccounts.toString());
+		} else {
+			return Mono.error(new InterruptedException(
+					"Servicio no disponible: " + SignatoriesCustomerAccounts.class.getSimpleName()));
+		}
+
 		return accountsRepository.insert(signatoriesCustomerAccounts);
 	}
 
@@ -90,7 +107,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 
 	@Override
 	public Mono<Map<String, Object>> registerSignature(SignatoriesCustomerAccounts signatoriesCustomerAccounts) {
-		Account account = this.findIdCredit(signatoriesCustomerAccounts.getIdAccount());
+		Account account = this.findIdAccount(signatoriesCustomerAccounts.getIdAccount());
 		Customer customer = this.findIdCustomer(signatoriesCustomerAccounts.getIdCustomer());
 		Map<String, Object> hasMap = new HashMap<>();
 		if (account != null) {
@@ -158,7 +175,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 
 	@Override
 	public Product findIdProducto(Long idProducto) {
-		log.info(productService + "/" + idProducto);
+		/*log.info(productService + "/" + idProducto);
 		ResponseEntity<Product> responseGet = restTemplate.exchange(productService + "/" + idProducto, HttpMethod.GET,
 				null, new ParameterizedTypeReference<Product>() {
 				});
@@ -166,12 +183,16 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 			return responseGet.getBody();
 		} else {
 			return null;
-		}
+		}*/
+		
+		Product product = productFeignClient.findById(idProducto);
+		log.info("ProductFeignClient: " + product.toString());
+		return product;
 	}
 
 	@Override
-	public Customer findIdCustomer(Long id) {
-		log.info(customerService + "/" + id);
+	public Customer findIdCustomer(Long idCustomer) {
+		/*log.info(customerService + "/" + id);
 		ResponseEntity<Customer> responseGet = restTemplate.exchange(customerService + "/" + id, HttpMethod.GET, null,
 				new ParameterizedTypeReference<Customer>() {
 				});
@@ -179,12 +200,16 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 			return responseGet.getBody();
 		} else {
 			return null;
-		}
+		}*/
+		
+		Customer customer = customerFeignClient.customerfindById(idCustomer);
+		log.info("CustomerFeignClient: " + customer.toString());
+		return customer;
 	}
 
 	@Override
-	public Account findIdCredit(Long idCredit) {
-		log.info(accountService + "/" + idCredit);
+	public Account findIdAccount(Long idAccount) {
+		/*log.info(accountService + "/" + idCredit);
 		ResponseEntity<Account> responseGet = restTemplate.exchange(accountService + "/" + idCredit, HttpMethod.GET,
 				null, new ParameterizedTypeReference<Account>() {
 				});
@@ -193,21 +218,26 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 			return responseGet.getBody();
 		} else {
 			return null;
-		}
+		}*/
+		
+		Account account = accountFeignClient.accountFindById(idAccount);
+		log.info("AccountFeignClient: " + account.toString());
+		return account;
 	}
-	
+
 	@Override
 	public Long generateKey(String nameTable) {
-		log.info(tableIdService + "/generateKey/" + nameTable);
-		ResponseEntity<Long> responseGet = restTemplate.exchange(tableIdService + "/generateKey/" + nameTable, HttpMethod.GET,
-				null, new ParameterizedTypeReference<Long>() {
+		/*log.info(tableIdService + "/generateKey/" + nameTable);
+		ResponseEntity<Long> responseGet = restTemplate.exchange(tableIdService + "/generateKey/" + nameTable,
+				HttpMethod.GET, null, new ParameterizedTypeReference<Long>() {
 				});
 		if (responseGet.getStatusCode() == HttpStatus.OK) {
-			log.info("Body:"+ responseGet.getBody());
-			
+			log.info("Body:" + responseGet.getBody());
+
 			return responseGet.getBody();
 		} else {
 			return Long.valueOf(0);
-		}
+		}*/
+		return tableIdFeignClient.generateKey(nameTable);
 	}
 }
