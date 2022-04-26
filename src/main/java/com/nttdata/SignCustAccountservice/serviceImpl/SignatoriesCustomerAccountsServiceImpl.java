@@ -113,6 +113,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 		if (account != null) {
 			if (customer != null) {
 				Product product = this.findIdProducto(account.getIdProduct());
+				if(product!=null) {
 				if (customer.getTypeCustomer() == TypeCustomer.company) {
 					// mas de un registro pero solo de tres cuentas
 					//  Cuenta corriente:
@@ -161,6 +162,10 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 
 				}
 				return Mono.just(hasMap);
+				}else {
+					hasMap.put("product", "El producto no exite.");
+					return Mono.just(hasMap);
+				}
 			} else {
 				hasMap.put("customer", "El cliente no exite.");
 				return Mono.just(hasMap);
@@ -203,7 +208,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 		}*/
 		
 		Customer customer = customerFeignClient.customerfindById(idCustomer);
-		log.info("CustomerFeignClient: " + customer.toString());
+		//log.info("CustomerFeignClient: " + customer.toString());
 		return customer;
 	}
 
@@ -221,7 +226,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 		}*/
 		
 		Account account = accountFeignClient.accountFindById(idAccount);
-		log.info("AccountFeignClient: " + account.toString());
+		//log.info("AccountFeignClient: " + account.toString());
 		return account;
 	}
 
