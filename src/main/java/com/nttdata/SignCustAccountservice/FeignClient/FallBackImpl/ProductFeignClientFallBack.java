@@ -16,10 +16,10 @@ public class ProductFeignClientFallBack implements ProductFeignClient {
 	private String productService;
 	
 	public Product findById(Long id) {
-		Product product = new Product();
-		product.setIdProducto(Long.valueOf(-1));
-		log.info("ProductFeignClientFallBack["+productService+"/"+id+"]:" + product.toString());
-		return product;
+		//Product product = new Product();
+		//product.setIdProducto(Long.valueOf(-1));
+		log.info("ProductFeignClientFallBack["+productService+"/"+id+"]" );
+		return null;
 	}
 
 }
