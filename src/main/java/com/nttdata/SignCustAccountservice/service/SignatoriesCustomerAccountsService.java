@@ -26,7 +26,7 @@ public interface SignatoriesCustomerAccountsService {
 
 	Customer findIdCustomer(Long id);
 
-	Account findIdCredit(Long idCredit);
+	Account findIdAccount(Long idCredit);
 
 	Mono<Map<String, Object>> registerSignature(SignatoriesCustomerAccounts signatoriesCustomerAccounts);
 
