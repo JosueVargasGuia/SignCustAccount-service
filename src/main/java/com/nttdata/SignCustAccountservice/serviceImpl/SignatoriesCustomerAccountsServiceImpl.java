@@ -1,26 +1,20 @@
 package com.nttdata.SignCustAccountservice.serviceImpl;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.netflix.discovery.converters.Auto;
 import com.nttdata.SignCustAccountservice.FeignClient.AccountFeignClient;
 import com.nttdata.SignCustAccountservice.FeignClient.CustomerFeignClient;
 import com.nttdata.SignCustAccountservice.FeignClient.ProductFeignClient;
 import com.nttdata.SignCustAccountservice.FeignClient.TableIdFeignClient;
 import com.nttdata.SignCustAccountservice.entity.SignatoriesCustomerAccounts;
 import com.nttdata.SignCustAccountservice.model.Account;
-
 import com.nttdata.SignCustAccountservice.model.Customer;
 import com.nttdata.SignCustAccountservice.model.Product;
 import com.nttdata.SignCustAccountservice.model.ProductId;
@@ -83,6 +77,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 		Long key = generateKey(SignatoriesCustomerAccounts.class.getSimpleName());
 		if (key >= 1) {
 			signatoriesCustomerAccounts.setIdSignCustAccount(key);
+			signatoriesCustomerAccounts.setCreationDate(Calendar.getInstance().getTime());
 			log.info("SAVE [SignatoriesCustomerAccounts]: " + signatoriesCustomerAccounts.toString());
 		} else {
 			return Mono.error(new InterruptedException(
@@ -95,6 +90,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 	@Override
 	public Mono<SignatoriesCustomerAccounts> update(SignatoriesCustomerAccounts signatoriesCustomerAccounts) {
 		// TODO Auto-generated method stub
+		signatoriesCustomerAccounts.setDateModified(Calendar.getInstance().getTime());
 		return accountsRepository.save(signatoriesCustomerAccounts);
 	}
 
