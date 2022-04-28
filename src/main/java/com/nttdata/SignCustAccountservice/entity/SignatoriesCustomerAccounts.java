@@ -11,9 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "SignatoriesCustomerAccounts")
@@ -27,11 +29,5 @@ public class SignatoriesCustomerAccounts {
 	private Date creationDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	private Date dateModified;
-
-	@Override
-	public String toString() {
-		return "SignatoriesCustomerAccounts [idSignCustAccount=" + idSignCustAccount + ", idCustomer=" + idCustomer
-				+ ", idAccount=" + idAccount + "]";
-	}
 
 }
