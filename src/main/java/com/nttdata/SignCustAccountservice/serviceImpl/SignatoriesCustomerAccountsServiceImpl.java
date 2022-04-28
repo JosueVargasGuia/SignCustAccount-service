@@ -15,6 +15,7 @@ import com.nttdata.SignCustAccountservice.FeignClient.ProductFeignClient;
 import com.nttdata.SignCustAccountservice.FeignClient.TableIdFeignClient;
 import com.nttdata.SignCustAccountservice.entity.SignatoriesCustomerAccounts;
 import com.nttdata.SignCustAccountservice.model.Account;
+import com.nttdata.SignCustAccountservice.model.BankAccounts;
 import com.nttdata.SignCustAccountservice.model.Customer;
 import com.nttdata.SignCustAccountservice.model.Product;
 import com.nttdata.SignCustAccountservice.model.ProductId;
@@ -103,7 +104,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 
 	@Override
 	public Mono<Map<String, Object>> registerSignature(SignatoriesCustomerAccounts signatoriesCustomerAccounts) {
-		Account account = this.findIdAccount(signatoriesCustomerAccounts.getIdAccount());
+		BankAccounts account = this.findIdAccount(signatoriesCustomerAccounts.getIdAccount());
 		Customer customer = this.findIdCustomer(signatoriesCustomerAccounts.getIdCustomer());
 		Map<String, Object> hasMap = new HashMap<>();
 		if (account != null) {
@@ -119,17 +120,16 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 					if (product.getProductId() == ProductId.CuentaCorriente
 							|| product.getProductId() == ProductId.Empresarial
 							|| product.getProductId() == ProductId.TarjetaCreditoEmpresarial) {
-						hasMap.put("SignatoriesCustomerAccounts", "Firma autorisante registrado.");
+						hasMap.put("SignatoriesCustomerAccounts", "Firma autorizante registrado.");
 						Mono<Map<String, Object>> mono = this.save(signatoriesCustomerAccounts).map(_obj -> {
-							log.info("SignatoriesCustomerAccounts:Firma autorisante registrado.");
+							log.info("SignatoriesCustomerAccounts: Firma autorizante registrado.");
 
 							return hasMap;
 						});
 						// mono.subscribe();
 						return mono;
 					} else {
-						hasMap.put("SignatoriesCustomerAccounts",
-								"No se puede registrar la firma autorisante en la cuenta");
+						hasMap.put("SignatoriesCustomerAccounts","No se puede registrar la firma autorizante en la cuenta");
 						return Mono.just(hasMap);
 					}
 
@@ -141,33 +141,29 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 									&& _filter.getIdCustomer() == signatoriesCustomerAccounts.getIdCustomer())
 							.collect(Collectors.counting()).map(_value -> {
 								if (_value <= 0) {
-									hasMap.put("SignatoriesCustomerAccounts", "Firma autorisante registrado.");
-									log.info("SignatoriesCustomerAccounts:Firma autorisante registrado.");
+									hasMap.put("SignatoriesCustomerAccounts", "Firma autorizante registrado.");
+									log.info("SignatoriesCustomerAccounts: Firma autorizante registrado.");
 									this.save(signatoriesCustomerAccounts).subscribe();
 								} else {
-									log.info(
-											"SignatoriesCustomerAccounts:Existe  una firma registrada para  el cliente "
-													+ customer.getFirstname());
-									hasMap.put("customer",
-											"Existe  una firma registrada para  el cliente " + customer.getFirstname());
+									log.info("SignatoriesCustomerAccounts: Existe  una firma registrada para  el cliente "+ customer.getFirstname());
+									hasMap.put("customer","Existe  una firma registrada para  el cliente " + customer.getFirstname());
 								}
 								return hasMap;
 							});
-					// mono.subscribe();
 					return mono;
 
 				}
 				return Mono.just(hasMap);
 				}else {
-					hasMap.put("product", "El producto no exite.");
+					hasMap.put("product", "El producto no existe.");
 					return Mono.just(hasMap);
 				}
 			} else {
-				hasMap.put("customer", "El cliente no exite.");
+				hasMap.put("customer", "El cliente no existe.");
 				return Mono.just(hasMap);
 			}
 		} else {
-			hasMap.put("account", "La cuenta no exite.");
+			hasMap.put("account", "La cuenta no existe.");
 			return Mono.just(hasMap);
 
 		}
@@ -204,12 +200,11 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 		}*/
 		
 		Customer customer = customerFeignClient.customerfindById(idCustomer);
-		//log.info("CustomerFeignClient: " + customer.toString());
 		return customer;
 	}
 
 	@Override
-	public Account findIdAccount(Long idAccount) {
+	public BankAccounts findIdAccount(Long idAccount) {
 		/*log.info(accountService + "/" + idCredit);
 		ResponseEntity<Account> responseGet = restTemplate.exchange(accountService + "/" + idCredit, HttpMethod.GET,
 				null, new ParameterizedTypeReference<Account>() {
@@ -221,7 +216,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 			return null;
 		}*/
 		
-		Account account = accountFeignClient.accountFindById(idAccount);
+		BankAccounts account = accountFeignClient.accountFindById(idAccount);
 		//log.info("AccountFeignClient: " + account.toString());
 		return account;
 	}

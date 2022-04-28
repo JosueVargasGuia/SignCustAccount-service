@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.nttdata.SignCustAccountservice.FeignClient.AccountFeignClient;
-import com.nttdata.SignCustAccountservice.model.Account;
+import com.nttdata.SignCustAccountservice.model.BankAccounts;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -16,7 +16,7 @@ public class AccountFeignClientFallBack implements AccountFeignClient{
 	private String accountService;
 	
 	@Override
-	public Account accountFindById(Long id) {
+	public BankAccounts accountFindById(Long id) {
 		log.info("AccountFeignClientFallBack -> " + accountService);
 		return null;
 	}
