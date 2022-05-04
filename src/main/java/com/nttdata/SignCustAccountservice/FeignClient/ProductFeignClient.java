@@ -8,9 +8,11 @@ import com.nttdata.SignCustAccountservice.FeignClient.FallBackImpl.ProductFeignC
 import com.nttdata.SignCustAccountservice.model.Product;
 
 
-@FeignClient(name ="${api.product-service.uri}", fallback = ProductFeignClientFallBack.class)
+@FeignClient(name ="${api.product-service.uri}"
+//, fallback = ProductFeignClientFallBack.class
+)
 public interface ProductFeignClient {
  
-	@GetMapping("/{idProducto}") 
-	Product findById(@PathVariable(name="idProducto")Long id);
+	@GetMapping("/{idProduct}") 
+	Product findById(@PathVariable(name="idProduct")Long id);
 }
