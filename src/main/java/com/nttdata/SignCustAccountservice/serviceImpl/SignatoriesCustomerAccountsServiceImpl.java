@@ -117,9 +117,9 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 					//  Empresarial
 					//  Empresarial
 
-					if (product.getProductId() == ProductId.CuentaCorriente
-							|| product.getProductId() == ProductId.Empresarial
-							|| product.getProductId() == ProductId.TarjetaCreditoEmpresarial) {
+					if (product.getProductId() == ProductId.CurrentAccount
+							|| product.getProductId() == ProductId.Business
+							|| product.getProductId() == ProductId.BusinessCreditCard) {
 						hasMap.put("SignatoriesCustomerAccounts", "Firma autorizante registrado.");
 						Mono<Map<String, Object>> mono = this.save(signatoriesCustomerAccounts).map(_obj -> {
 							log.info("SignatoriesCustomerAccounts: Firma autorizante registrado.");
@@ -183,7 +183,7 @@ public class SignatoriesCustomerAccountsServiceImpl implements SignatoriesCustom
 		}*/
 		
 		Product product = productFeignClient.findById(idProducto);
-		log.info("ProductFeignClient: " + product.toString());
+		//log.info("ProductFeignClient: " + product.toString());
 		return product;
 	}
 
