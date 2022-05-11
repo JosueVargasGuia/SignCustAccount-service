@@ -2,9 +2,10 @@
 /target/*
 /.settings/*
 /.classpath
+/log
 .factorypath
 .project
 .gitignore.bak
 .gitignore.bak
-mvnw.cmd
 mvnw
+mvnw.cmd
